@@ -1,0 +1,2 @@
+# gogohugo
+testing go hugo
