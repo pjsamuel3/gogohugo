@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>My post - Hugo Whisper Theme</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link rel="icon" href="/favicon.png">
+
+  
+  
+  <link rel="stylesheet" href="/css/style.min.aad43d4ecb69a264f2539b89d7f779d5f3cdff22e7585fe5fc3c77272f1c2696.css">
+  
+
+  
+
+</head>
+
+<body class='page page-default-single'>
+  <div id="main-menu-mobile" class="main-menu-mobile">
+  <ul>
+    
+    
+    <li class="menu-item-home">
+      <a href="/">
+        <span>Home</span>
+      </a>
+    </li>
+    
+    <li class="menu-item-docs">
+      <a href="/docs/">
+        <span>Docs</span>
+      </a>
+    </li>
+    
+  </ul>
+</div>
+  <div class="wrapper">
+    <div class='header'>
+  <div class="container">
+    <div class="logo">
+      <a href="/"><img alt="Logo" src="/images/logo.svg" /></a>
+    </div>
+    <div class="logo-mobile">
+      <a href="/"><img alt="Logo" src="/images/logo-mobile.svg" /></a>
+    </div>
+    <div id="main-menu" class="main-menu">
+  <ul>
+    
+    
+    <li class="menu-item-home">
+      <a href="/">
+        <span>Home</span>
+      </a>
+    </li>
+    
+    <li class="menu-item-docs">
+      <a href="/docs/">
+        <span>Docs</span>
+      </a>
+    </li>
+    
+  </ul>
+</div>
+    <button id="toggle-main-menu-mobile" class="hamburger hamburger--slider" type="button">
+  <span class="hamburger-box">
+    <span class="hamburger-inner"></span>
+  </span>
+</button>
+  </div>
+</div>
+
+
+    
+    
+    
+    
+    
+    
+
+    
+    <div class="container pt-2 pt-md-6 pb-3 pb-md-6">
+      <div class="row">
+        <div class="col-12 col-md-3 mb-3">
+          <div class="sidebar">
+            
+<div class="docs-menu">
+  <h4>Docs</h4>
+  <ul>
+    
+    <li class="">
+      <a href="/docs/install-hugo/">Install Hugo</a>
+    </li>
+    
+    <li class="">
+      <a href="/docs/install-theme/">Install Theme</a>
+    </li>
+    
+    <li class="">
+      <a href="/docs/configure/">Configuration</a>
+    </li>
+    
+    <li class="">
+      <a href="/docs/specimen/">Specimen</a>
+    </li>
+    
+    <li class="">
+      <a href="/docs/example/">Hugo Whisper</a>
+    </li>
+    
+    <li class="">
+      <a href="/docs/buttons/">Buttons</a>
+    </li>
+    
+    <li class="">
+      <a href="/docs/breadcrumbs/">Breadcrumbs</a>
+    </li>
+    
+    <li class="">
+      <a href="/docs/collapse/">Collapse</a>
+    </li>
+    
+    <li class="">
+      <a href="/docs/animation/">Animation</a>
+    </li>
+    
+    <li class="">
+      <a href="/docs/colors/">Colors</a>
+    </li>
+    
+    <li class="active ">
+      <a href="/docs/my-new-doc/">My post</a>
+    </li>
+    
+  </ul>
+</div>
+
+          </div>
+        </div>
+        <div class="col-12 col-md-9">
+          
+<h1 class="title">My post</h1>
+<div class="content ">
+  <hr>
+<h2 id="title-go-repos-within-amedia">title: Go repos within Amedia</h2>
+<p>There are really no strict rules within Amedia on how to organize a Go project. But
+in order to make use of our tools for CI and deployment, it has to adhere to some
+basic conventions.</p>
+<h1 id="preparing-a-go-app-for-release-and-deployment">Preparing a Go app for release and deployment</h1>
+<p>As all other services within Amedia, a Go service will be released as a Docker image and
+deployed to Kubernetes somewhere.</p>
+<p>It is critical that the released code are compiled, tested and build in an environment identical to the Docker image deployed to production. The best way to achieve this is by running the entire build process within Docker. But instead of having different Dockerfile&rsquo;s for build and release, we recommend using <a href="https://docs.docker.com/develop/develop-images/multistage-build/">Docker Multi-Stage builds</a>.</p>
+<p>This way we keep everything within one <em>Dockerfile</em> and provides a consistent
+build process acrosse machines and environments.</p>
+<h2 id="creating-a-dockerfile-for-your-project">Creating a Dockerfile for your project</h2>
+<p>Exactly how your Dockerfile should end up depends on the folder structure, tools and so on. But the main structure should more or less be the same. Let&rsquo;s look at a real-life example from Iscado (with comments):</p>
+<div class="highlight"><pre class="chroma"><code class="language-docker" data-lang="docker"><span class="c"># ----------------------------------------------------</span><span class="err">
+</span><span class="err"></span><span class="c"># Deps stage</span><span class="err">
+</span><span class="err"></span><span class="c">#</span><span class="err">
+</span><span class="err"></span><span class="c"># Make sure all dependencies are checked and downloaded</span><span class="err">
+</span><span class="err"></span><span class="c"># ----------------------------------------------------</span><span class="err">
+</span><span class="err"></span><span class="c"># By using our go-app docker image you get access to</span><span class="err">
+</span><span class="err"></span><span class="c"># the private go packages at https://github.com/amedia</span><span class="err">
+</span><span class="err"></span><span class="c"># Find latest release here:</span><span class="err">
+</span><span class="err"></span><span class="c"># https://github.com/amedia/dokka/tree/master/amedia/go-app</span><span class="err">
+</span><span class="err"></span><span class="k">FROM</span><span class="s"> dr.api.no/amedia/go-app:1.10.3-3 AS deps</span><span class="err">
+</span><span class="err"></span><span class="c"># Modify to match your project name</span><span class="err">
+</span><span class="err"></span><span class="k">ADD</span> . /go/src/github.com/amedia/iscado<span class="err">
+</span><span class="err"></span><span class="k">WORKDIR</span><span class="s"> /go/src/github.com/amedia/iscado</span><span class="err">
+</span><span class="err"></span><span class="k">RUN</span> dep ensure<span class="err">
+</span><span class="err"></span><span class="err">
+</span><span class="err"></span><span class="c"># ----------------------------------------------------</span><span class="err">
+</span><span class="err"></span><span class="c"># Test stage</span><span class="err">
+</span><span class="err"></span><span class="c">#</span><span class="err">
+</span><span class="err"></span><span class="c"># Run tests as soon as possible.</span><span class="err">
+</span><span class="err"></span><span class="c"># ----------------------------------------------------</span><span class="err">
+</span><span class="err"></span><span class="k">FROM</span><span class="s"> deps AS test</span><span class="err">
+</span><span class="err"></span><span class="k">RUN</span> go <span class="nb">test</span> -v ./cmd/... ./pkg/...<span class="err">
+</span><span class="err"></span><span class="err">
+</span><span class="err"></span><span class="c"># ----------------------------------------------------</span><span class="err">
+</span><span class="err"></span><span class="c"># Build stage</span><span class="err">
+</span><span class="err"></span><span class="c">#</span><span class="err">
+</span><span class="err"></span><span class="c"># Build the binaries</span><span class="err">
+</span><span class="err"></span><span class="c"># ----------------------------------------------------</span><span class="err">
+</span><span class="err"></span><span class="k">FROM</span><span class="s"> deps AS build</span><span class="err">
+</span><span class="err"></span><span class="k">RUN</span> <span class="nv">CGO_ENABLED</span><span class="o">=</span><span class="m">0</span> <span class="nv">GOOS</span><span class="o">=</span>linux <span class="nv">GOARCH</span><span class="o">=</span>amd64 <span class="se">\</span><span class="err">
+</span><span class="err"></span>    go build -a -installsuffix cgo -o /app/bin/iscado ./cmd/iscado<span class="err">
+</span><span class="err"></span><span class="err">
+</span><span class="err"></span><span class="c"># ----------------------------------------------------</span><span class="err">
+</span><span class="err"></span><span class="c"># Release stage</span><span class="err">
+</span><span class="err"></span><span class="c"># ----------------------------------------------------</span><span class="err">
+</span><span class="err"></span><span class="c"># Some people prefer running Go apps in Scratch, but</span><span class="err">
+</span><span class="err"></span><span class="c"># having a shell is nice too :)</span><span class="err">
+</span><span class="err"></span><span class="k">FROM</span><span class="s"> alpine:3.6 as release</span><span class="err">
+</span><span class="err"></span><span class="k">ENV</span> <span class="nv">LC_ALL</span><span class="o">=</span>en_US.UTF-8<span class="err">
+</span><span class="err"></span><span class="k">ENV</span> <span class="nv">LC_LANG</span><span class="o">=</span>en_US.UTF-8<span class="err">
+</span><span class="err"></span><span class="k">ENV</span> <span class="nv">LC_LANGUAGE</span><span class="o">=</span>en_US.UTF-8<span class="err">
+</span><span class="err"></span><span class="c"># Copy binaries from the build stage into this image</span><span class="err">
+</span><span class="err"></span><span class="k">COPY</span> --from<span class="o">=</span>build /app/bin/ /app/bin<span class="err">
+</span><span class="err"></span><span class="c"># Add extra files needed from your project</span><span class="err">
+</span><span class="err"></span><span class="k">ADD</span> etc/ca-certificates.crt /etc/ssl/certs/<span class="err">
+</span><span class="err"></span><span class="k">ADD</span> config/pubsub-jwt.json /app/config/<span class="err">
+</span><span class="err"></span><span class="k">WORKDIR</span><span class="s"> /app</span><span class="err">
+</span><span class="err"></span><span class="k">ENTRYPOINT</span> <span class="p">[</span><span class="s2">&#34;/app/bin/iscado&#34;</span><span class="p">]</span><span class="err">
+</span><span class="err"></span><span class="k">EXPOSE</span><span class="s"> 9802</span><span class="err">
+</span></code></pre></div><p><code>docker build .</code> will build the binary, run the tests and build the final Docker image. Be aware that You need Docker 17.05+ for Multi-Stage builds to work.</p>
+<h2 id="cop-setup">COP setup</h2>
+<p><a href="devops/release.html">COP</a> is our tool for releasing apps and libraries. Creating a <code>cop.json</code> for your project is pretty simlpe. Again, let&rsquo;s look
+at an example from Iscado:</p>
+<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+  <span class="nt">&#34;cop.version&#34;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+  <span class="nt">&#34;builds&#34;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&#34;build&#34;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;iscado&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;docker&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;tool&#34;</span><span class="p">:</span> <span class="s2">&#34;semver&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;access&#34;</span><span class="p">:</span> <span class="s2">&#34;private&#34;</span>
+      <span class="p">},</span>
+      <span class="nt">&#34;release&#34;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&#34;docker&#34;</span><span class="p">:</span> <span class="p">{</span>
+          <span class="nt">&#34;target&#34;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&#34;eu.gcr.io/amedia-analytics-eu&#34;</span>
+          <span class="p">]</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div><p>For docker builds the trick is to set <code>tool</code> to <code>semver</code>. And as you might have guessed already, you will need a <code>.semver</code> file in your project. Initially it should look something like this.:</p>
+<div class="highlight"><pre class="chroma"><code class="language-text" data-lang="text">---
+:major: 0
+:minor: 0
+:patch: 1
+:special: &#39;&#39;
+</code></pre></div><h1 id="note-about-private-go-packages">Note about private Go packages</h1>
+<p>First of all, go-mod will use http to download private repos, just as it does with public ones. Since we use ssh to access github, this wont work. so we have to add this config to our local git client:
+<code>git config --global url.&quot;git@github.com:&quot;.insteadOf &quot;https://github.com/&quot;</code></p>
+<p>In order for Docker to get access to our private Go packages during builds, each of these GitHub repositories must give the <code>go-dependencies</code> team read access.</p>
+<p><img src="/images/handbook/golang/access.png" alt="Permission example"></p>
+<p>Note: You need to be GitHub admin to do this.</p>
+
+</div>
+</div>
+
+        </div>
+      </div>
+    </div>
+    
+  </div>
+
+  <div class="sub-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="sub-footer-inner">
+          <ul>
+            <li class="zerostatic"><a href="https://www.zerostatic.io">www.zerostatic.io</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/scripts.min.1237ff71925bb8625c97a9af8db4c54525258bedfd7c47493daaff723bea755e.js"></script>
+  
+
+  
+  
+  
+    
+  
+
+
+</body>
+
+</html>
